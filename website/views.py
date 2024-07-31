@@ -49,8 +49,24 @@ def add_record(request):
     if request.method == "POST" and form.is_valid():
         form.save()
         messages.success(request, "Record added...")
+        return redirect('home')
     
     return render(request, 'add_record.html', {'form': form})
+
+def update_record(request, pk):
+    if not request.user.is_authenticated:
+        messages.warning(request, "You must be logged in to view this page...")
+        return redirect('home')
+
+    record = Record.objects.get(id=pk)
+    form = AddRecordForm(request.POST or None, instance=record)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Record updated...")
+        return render(request, 'record.html', {'record': record})
+    return render(request, 'update_record.html', {'form': form})
+    
 
 def register_user(request):
     form = SignUpForm(request.POST or None)

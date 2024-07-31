@@ -29,6 +29,16 @@ def customer_record(request, pk):
     record = Record.objects.get(id=pk)
     return render(request, 'record.html', {'record': record})
 
+def delete_record(request, pk):
+    if not request.user.is_authenticated:
+        messages.warning(request, "You must be logged in to view this page...")
+        return redirect('home')
+
+    record = Record.objects.get(id=pk)
+    record.delete()
+    messages.success(request, f"Customer ID #{pk} deleted successfully!")
+    return redirect('home')
+
 def register_user(request):
     if request.method == "POST":
         form = SignUpForm(request.POST)

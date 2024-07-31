@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import SignUpForm
+from .forms import SignUpForm, AddRecordForm
 from .models import Record
 
 # Create your views here.
@@ -39,22 +39,31 @@ def delete_record(request, pk):
     messages.success(request, f"Customer ID #{pk} deleted successfully!")
     return redirect('home')
 
+def add_record(request):
+    if not request.user.is_authenticated:
+        messages.warning(request, "You must be logged in to view this page...")
+        return redirect('home')
+
+    form = AddRecordForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Record added...")
+    
+    return render(request, 'add_record.html', {'form': form})
+
 def register_user(request):
-    if request.method == "POST":
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password1']
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            messages.success(request, "You've successfully registered")
-            return redirect('home')
-        else:
-            return render(request, 'register.html', {'form': form})
-    else:
-        form = SignUpForm()
-        return render(request, 'register.html', {'form': form})
+    form = SignUpForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        username = form.cleaned_data['username']
+        password = form.cleaned_data['password1']
+        user = authenticate(username=username, password=password)
+        login(request, user)
+        messages.success(request, "You've successfully registered")
+        return redirect('home')
+    
+    return render(request, 'register.html', {'form': form})
 
 def logout_user(request):
     logout(request)

@@ -17,6 +17,9 @@
         <li class="nav-item">
           <a class="nav-link" href="#">Links</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'add_record' %}">Add Record</a>
+        </li>
       </ul>
       {% if user.is_authenticated %}
       <div class="px-2">({{ user.username }})</div>

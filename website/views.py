@@ -65,7 +65,7 @@ def update_record(request, pk):
         form.save()
         messages.success(request, "Record updated...")
         return render(request, 'record.html', {'record': record})
-    return render(request, 'update_record.html', {'form': form})
+    return render(request, 'update_record.html', {'form': form, 'record_id': record.id})
     
 
 def register_user(request):
